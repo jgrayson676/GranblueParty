@@ -216,11 +216,17 @@ export default {
         for (let item of items) {
           if (this.getComponentsPerBullet.hasOwnProperty(item.image)) {
             // It's a bullet, do we have stock?
-            if (bulletStock.hasOwnProperty(item.image) && bulletStock[item.image] > 0) {
-              bulletStock[item.image]--;
+            if (bulletStock.hasOwnProperty(item.image) && bulletStock[item.image] >= item.quantity) {
+              bulletStock[item.image] = bulletStock[item.image] - item.quantity;
             }
             else {
-              addComponents(this.getComponentsPerBullet[item.image], item.quantity * mult);
+              let quantityNeeded = item.quantity * mult;
+              if (bulletStock[item.image] > 0) {
+                quantityNeeded = quantityNeeded - bulletStock[item.image];
+                bulletStock[item.image] = 0;
+              }
+              addComponents(this.getComponentsPerBullet[item.image], quantityNeeded);
+
             }
           }
           else if (allComponents.hasOwnProperty(item.image)) {
